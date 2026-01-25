@@ -47,6 +47,8 @@ export async function getDashboardStats() {
       totalPRs,
       totalRepos,
       totalReviews,
+      heatmapWeeks: calendar?.weeks ?? [],
+
     };
   } catch (error) {
     console.error("Error fetching dashboard stats:", error);

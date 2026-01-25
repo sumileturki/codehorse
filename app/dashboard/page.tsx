@@ -26,21 +26,20 @@ import {
   GitBranch,
 } from "lucide-react";
 
-import { ModeToggle } from "@/components/ui/modeToggle";
-import { getDashboardStats, getMonthlyActivity } from "@/module/dashboard/action";
+import { CommitHeatmap } from "@/module/github/components/CommitHeatmap";
 
-/* ================================
-   Main Dashboard Page
-================================ */
+import { ModeToggle } from "@/components/ui/modeToggle";
+import {
+  getDashboardStats,
+  getMonthlyActivity,
+} from "@/module/dashboard/action";
 
 const MainPage = () => {
-  /* -------- Dashboard Stats -------- */
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: getDashboardStats,
   });
 
-  /* -------- Monthly Activity -------- */
   const { data: monthlyData, isLoading: chartLoading } = useQuery({
     queryKey: ["monthly-activity"],
     queryFn: getMonthlyActivity,
@@ -48,13 +47,11 @@ const MainPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">GitHub Dashboard</h1>
         <ModeToggle />
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           title="Commits"
@@ -84,6 +81,21 @@ const MainPage = () => {
           loading={statsLoading}
         />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Contribution Activity</CardTitle>
+          <CardDescription>GitHub commit activity (last year)</CardDescription>
+        </CardHeader>
+
+        <CardContent className="flex items-center justify-center">
+          {statsLoading ? (
+            <div className="text-muted-foreground">Loading heatmap...</div>
+          ) : (
+            <CommitHeatmap weeks={stats?.heatmapWeeks ?? []} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Monthly Activity Chart */}
       <Card>
@@ -119,10 +131,6 @@ const MainPage = () => {
 
 export default MainPage;
 
-/* ================================
-   Reusable Stat Card
-================================ */
-
 function StatCard({
   title,
   value,
@@ -141,9 +149,7 @@ function StatCard({
         {icon}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">
-          {loading ? "—" : value ?? 0}
-        </div>
+        <div className="text-2xl font-bold">{loading ? "—" : (value ?? 0)}</div>
       </CardContent>
     </Card>
   );
