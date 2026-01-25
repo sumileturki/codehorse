@@ -2,8 +2,10 @@ import { LayoutProp } from '@/lib/types'
 import { SidebarProvider, SidebarTrigger, SidebarInset } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/app-sidebar'
 import { Separator } from '@/components/ui/separator'
+import { requireAuth } from '@/module/auth/utils/auth-utils'
 
-const DashBoardLayout = ({children}:LayoutProp) => {
+const DashBoardLayout = async ({children}:LayoutProp) => {
+    await requireAuth()
   return (
     <SidebarProvider>
         <AppSidebar/>
