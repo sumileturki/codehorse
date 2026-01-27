@@ -2,6 +2,7 @@ import { Octokit } from "octokit";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { headers } from "next/headers";
+import { title } from "process";
 
 /* ================================
    GitHub Token
@@ -231,4 +232,52 @@ export async function getRepoFileContents(
   }
 
   return files;
+}
+
+
+export async function getPullRequestDiff(
+  token: string,
+  owner: string,
+  repo: string,
+  prNumber: number
+){
+  const octokit = new Octokit({auth:token});
+
+  const {data:pr}= await octokit.rest.pulls.get({
+    owner,
+    repo,
+    pull_number:prNumber
+  })
+
+  const {data:diff} = await octokit.rest.pulls.get({
+    owner,
+    repo,
+    pull_number:prNumber,
+    mediaType:{
+      format:"diff"
+    }
+  })
+
+  return{
+    diff: diff as unknown as string,
+    title: pr.title,
+    description: pr.body
+  }
+}
+
+export async function postReviewComment(
+  token: string,
+  owner:string,
+  repo: string,
+  prNumber:number,
+  review:string
+){
+  const octokit = new Octokit({auth:token});
+
+  await octokit.rest.issues.createComment({
+    owner,
+    repo,
+    issue_number: prNumber,
+    body: ` ## Ai code reviw \n\n ${review}\n\n *Powede by Code horese`
+  })
 }
