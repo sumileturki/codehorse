@@ -3,6 +3,7 @@ import prisma from "@/lib/db";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { createWebhook, getRepositories } from "@/module/github/lib/github";
+import { inngest } from "@/inngest/client";
 
 export const fetchRepositories = async (
   page: number = 1,
@@ -65,5 +66,17 @@ if(webhook){
 
 // TODO INCREMENT COUNT
 // 
-// TRIGER REPOS INDEXING FOR RAG
+
+try {
+  await inngest.send({
+    name:"repository.connected",
+    data:{
+      owner,
+      repo,
+      userId:session.user.id
+    }
+  })
+} catch (error) {
+  
+}
 }
