@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const event = req.headers.get("x-github-event");
     console.log(`Recived Github event: ${event}`);
-    
+        // console.log(`Recived Github event: ${event}`);
+// 
 
     if (event === "ping") {
       return NextResponse.json(
