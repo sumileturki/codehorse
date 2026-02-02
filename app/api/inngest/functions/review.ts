@@ -8,6 +8,7 @@ import { inngest } from "@/inngest/client";
 export const generateReview = inngest.createFunction(
   { id: "generate-review", concurrency: 5 },
   { event: "pr.review.requested" },
+  // jbnj
 
   async ({ event, step }) => {
     const { owner, repo, prNumber, userId } = event.data;
