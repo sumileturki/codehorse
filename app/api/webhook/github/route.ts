@@ -16,6 +16,8 @@ export async function POST(req: NextRequest) {
         { status: 200 }
       );
     }
+            // console.log(`Recived Github event: ${event}`);
+
 
     if (event === "pull_request") {
       const action = body.action;
