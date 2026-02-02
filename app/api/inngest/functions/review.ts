@@ -1,10 +1,9 @@
-
+import { getPullRequestDiff, postReviewComment } from "@/module/github/lib/github";
 import { retrieveContext } from "@/module/ai/lib/rag";
 import { generateText } from "ai";
 import { google } from "@ai-sdk/google";
 import prisma from "@/lib/db";
 import { inngest } from "@/inngest/client";
-import { getPullRequestDiff, postReviewComment } from "@/module/github/lib/github";
 
 export const generateReview = inngest.createFunction(
   { id: "generate-review", concurrency: 5 },
@@ -75,28 +74,51 @@ Format your response in markdown.`;
       await postReviewComment(token , owner , repo , prNumber , review)
     })
 
+    await step.run("save-review", async () => {
+  if (!prisma?.review) {
+    throw new Error("Prisma client not initialized");
+  }
 
-    await step.run("save-review" , async()=>{
-      const repository = await prisma.repository.findFirst({
-        where:{
-          owner,
-          name:repo
-        }
-      });
+  const repository = await prisma.repository.findFirst({
+    where: {
+      owner,
+      name: repo,
+    },
+  });
 
-      if(repository){
-                await prisma.review.create({
-          data: {
-            repositoryId: repository.id,
-            prNumber,
-            prTitle: title,
-            prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
-            review,
-            status: "completed",
-          },
-        });
-      }
-    })
+  if (!repository) {
+    throw new Error("Repository not found");
+  }
+
+  // Optional: prevent duplicate saves
+  const existing = await prisma.review.findFirst({
+    where: {
+      repositoryId: repository.id,
+      prNumber,
+    },
+  });
+
+  if (existing) {
+    return { alreadySaved: true };
+  }
+
+  await prisma.review.create({
+    data: {
+      repositoryId: repository.id,
+      prNumber,
+      prTitle: title,
+      prUrl: `https://github.com/${owner}/${repo}/pull/${prNumber}`,
+      review, // AI-generated text
+      status: "completed",
+    },
+  });
+
+  return { saved: true }; // SMALL output only
+});
+
+
+      
+    
 return {success:true}
   }
 )
