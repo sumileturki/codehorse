@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
       const repo = body.repository.full_name;
       const prNumber = body.number;
 
+
+      
       const[owner , repoName] = repo.split("/")
 
       if (action === "opened" || action ==="synchronize ") {
