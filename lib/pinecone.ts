@@ -5,4 +5,4 @@ export const pinecone = new Pinecone({
 
 })
 
-export const pineconeIndex = pinecone.index("code-horse-embedding")
+export const pineconeIndex = pinecone.index(process.env.PINECONE_INDEX!)
