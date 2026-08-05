@@ -6,8 +6,7 @@ import { step } from "inngest";
 import { success } from "zod";
 
 export const helloWorld = inngest.createFunction(
-  { id: "code-horse" },
-  { event: "test/hello.world" },
+  { id: "code-horse", triggers: [{ event: "test/hello.world" }] },
   async ({ event, step }) => {
     await step.sleep("wait-a-moment", "1s");
     return { message: `Heljhblo ${event.data.email}!` };
@@ -15,9 +14,9 @@ export const helloWorld = inngest.createFunction(
 );
 
 export const indexRepo = inngest.createFunction({
-  id: "index-repo"
+  id: "index-repo",
+  triggers: [{ event: "repository.connected" }]
 },
-{event:"repository.connected"},
 async ({event,step})=>{
   const {owner, repo, userId} = event.data
   // fetch all the files

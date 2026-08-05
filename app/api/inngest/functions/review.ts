@@ -6,8 +6,7 @@ import prisma from "@/lib/db";
 import { inngest } from "@/inngest/client";
 
 export const generateReview = inngest.createFunction(
-  { id: "generate-review", concurrency: 5 },
-  { event: "pr.review.requested" },
+  { id: "generate-review", concurrency: 5, triggers: [{ event: "pr.review.requested" }] },
   // jbnj
 
   async ({ event, step }) => {

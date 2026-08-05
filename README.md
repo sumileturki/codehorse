@@ -195,3 +195,4 @@ D --> E[Pinecone Vector Search]
 E --> F[Gemini AI Review Generation]
 F --> G[Review Stored in PostgreSQL]
 G --> H[Displayed in CodeHorse Dashboard]
+

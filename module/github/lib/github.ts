@@ -37,7 +37,7 @@ export const getGithubToken = async (): Promise<string> => {
 
 interface ContributionDay {
   contributionCount: number;
-  date: string; // ISO string from GitHub
+  date: string; 
   color: string;
 }
 
