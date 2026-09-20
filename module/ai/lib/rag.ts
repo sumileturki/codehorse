@@ -4,11 +4,13 @@ import { google } from "@ai-sdk/google";
 
 export async function generateEmbedding(text: string) {
   const { embedding } = await embed({
-    model: google.textEmbeddingModel("text-embedding-004"),
+    model: google.textEmbeddingModel("gemini-embedding-001"),
     value: text,
   });
 
-  return embedding;
+  // gemini-embedding-001 supports Matryoshka Representation Learning
+  // so we can safely truncate the vector array down to 768 to match the Pinecone index
+  return embedding.slice(0, 768);
 }
 
 export async function indexCodeBase(
